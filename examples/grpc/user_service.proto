@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package userservice;
+
+// ---------------------------------------------------------------------------
+// Service definition
+// ---------------------------------------------------------------------------
+
+service UserService {
+  // Unary RPC: retrieve a single user by ID
+  rpc GetUser    (GetUserRequest)    returns (UserResponse);
+
+  // Server-streaming RPC: stream all users one at a time
+  rpc ListUsers  (ListUsersRequest)  returns (stream UserResponse);
+
+  // Unary RPC: create a new user
+  rpc CreateUser (CreateUserRequest) returns (UserResponse);
+}
+
+// ---------------------------------------------------------------------------
+// Request messages
+// ---------------------------------------------------------------------------
+
+message GetUserRequest {
+  int32 user_id = 1;
+}
+
+message ListUsersRequest {
+  // No fields: request all users unconditionally
+}
+
+message CreateUserRequest {
+  string username = 1;
+  string email    = 2;
+  string role     = 3;
+}
+
+// ---------------------------------------------------------------------------
+// Response message
+// ---------------------------------------------------------------------------
+
+message UserResponse {
+  int32  user_id  = 1;
+  string username = 2;
+  string email    = 3;
+  string role     = 4;
+}

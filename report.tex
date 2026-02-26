@@ -1,0 +1,813 @@
+\documentclass[11pt,a4paper]{article}
+
+% Encoding and fonts
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% Page layout
+\usepackage[top=2.3cm, bottom=2.3cm, left=2.8cm, right=2.5cm]{geometry}
+\setlength{\headheight}{14pt}
+
+% Hyperlinks
+\usepackage[colorlinks=true, linkcolor=black, urlcolor=blue, citecolor=black]{hyperref}
+
+% Code listings
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+
+% Typography
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage[protrusion=true,expansion=false]{microtype}
+
+% Headers / footers
+\usepackage{fancyhdr}
+
+% Section formatting
+\usepackage{titlesec}
+
+% ------------------------------------------------------------------ %
+%  Colors
+% ------------------------------------------------------------------ %
+\definecolor{codegreen}{rgb}{0,0.50,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.48,0,0.62}
+\definecolor{codered}{rgb}{0.58,0,0}
+\definecolor{backcolour}{rgb}{0.97,0.97,0.97}
+
+% ------------------------------------------------------------------ %
+%  Listing style (numbered, for Python/proto)
+% ------------------------------------------------------------------ %
+\lstdefinestyle{codestyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{codered}\bfseries,
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=4pt,
+    showspaces=false,
+    showstringspaces=false,
+    tabsize=2,
+    frame=single,
+    framesep=3pt,
+    xleftmargin=14pt,
+    aboveskip=4pt,
+    belowskip=4pt,
+}
+
+% Listing style (no line numbers, for protocol-level examples)
+\lstdefinestyle{protstyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{codered}\bfseries,
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=none,
+    showspaces=false,
+    showstringspaces=false,
+    tabsize=2,
+    frame=single,
+    framesep=3pt,
+    xleftmargin=6pt,
+    aboveskip=4pt,
+    belowskip=4pt,
+}
+\lstset{style=protstyle}
+
+% Protobuf language
+\lstdefinelanguage{protobuf}{
+    keywords={syntax,package,message,service,rpc,returns,stream,
+              repeated,optional,required,string,int32,int64,bool,
+              float,double,enum,import,option},
+    keywordstyle=\color{codered}\bfseries,
+    comment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    commentstyle=\color{codegreen},
+    morestring=[b]",
+    stringstyle=\color{codepurple},
+    sensitive=true,
+}
+
+% GraphQL language
+\lstdefinelanguage{graphql}{
+    keywords={type,query,mutation,subscription,input,interface,
+              enum,union,scalar,fragment,on,directive,extend,schema},
+    keywordstyle=\color{codered}\bfseries,
+    comment=[l]{\#},
+    commentstyle=\color{codegreen},
+    morestring=[b]",
+    stringstyle=\color{codepurple},
+    sensitive=true,
+}
+
+% ------------------------------------------------------------------ %
+%  Page style
+% ------------------------------------------------------------------ %
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Comparative Analysis of API Communication Technologies}
+\fancyhead[R]{\small\thepage}
+\fancyfoot[C]{\small Academic Report --- February 2026}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% ------------------------------------------------------------------ %
+%  Section title spacing (compact)
+% ------------------------------------------------------------------ %
+\titlespacing*{\section}{0pt}{10pt}{4pt}
+\titlespacing*{\subsection}{0pt}{7pt}{3pt}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% ------------------------------------------------------------------ %
+%  Line / paragraph spacing
+% ------------------------------------------------------------------ %
+\setstretch{1.2}
+\setlength{\parskip}{4pt}
+\setlength{\parindent}{0pt}
+
+% Caption spacing
+\setlength{\abovecaptionskip}{3pt}
+\setlength{\belowcaptionskip}{2pt}
+
+% ================================================================== %
+\begin{document}
+% ================================================================== %
+
+% ------------------------------------------------------------------ %
+%  Compact title block
+% ------------------------------------------------------------------ %
+\begin{center}
+  {\large\bfseries Comparative Analysis of Service-Oriented Communication Technologies}\\[0.3em]
+  {\normalsize SOAP/WSDL \quad\textemdash\quad REST \quad\textemdash\quad
+   GraphQL \quad\textemdash\quad gRPC}\\[0.25em]
+  {\small Khaldoun \quad\textbar\quad
+   Distributed Systems and Microservices Architecture \quad\textbar\quad
+   February 2026}
+\end{center}
+\vspace{0.2em}
+\noindent\rule{\linewidth}{0.5pt}
+\vspace{-0.8em}
+
+% ------------------------------------------------------------------ %
+%  Table of contents
+% ------------------------------------------------------------------ %
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\vspace{0.5em}
+\noindent\rule{\linewidth}{0.3pt}
+\vspace{0.3em}
+
+% ================================================================== %
+\section{Introduction}
+% ================================================================== %
+
+Service-oriented computing (SOC) structures software as collections of interoperable,
+loosely coupled services, each exposing a well-defined interface independently of the
+underlying platform or implementation language. As distributed systems span
+organisational, geographic, and technology boundaries, the choice of communication
+paradigm has direct consequences for performance, security, developer experience, and
+long-term maintainability.
+
+This report compares four paradigms that have shaped distributed systems over the past
+three decades. \textbf{SOAP/WSDL} emerged in the late 1990s as a standards-driven,
+XML-based messaging protocol accompanied by a formal interface contract. \textbf{REST}
+(Representational State Transfer) was formalised by Roy Fielding in 2000 as an
+architectural style aligned with HTTP semantics, enabling simple, cacheable,
+resource-oriented APIs. \textbf{GraphQL}, developed at Facebook in 2012 and open-sourced
+in 2015, introduced a typed query language that allows clients to specify precisely the
+data they require. \textbf{gRPC}, released by Google in 2016, uses Protocol Buffers over
+HTTP/2 for high-performance binary RPC communication with native streaming support.
+
+The analysis evaluates each technology across eight dimensions: architecture and
+principles, strengths, weaknesses, technology stack and data encoding, execution
+environments, security model, and use cases. Section~3 illustrates each technology with
+code examples using a common user management domain. Section~4 consolidates the
+comparison in a summary table, and Section~5 discusses when each approach is most
+suitable.
+
+% ================================================================== %
+\section{Technology Analysis by Dimension}
+% ================================================================== %
+
+% ------------------------------------------------------------------ %
+\subsection{SOAP / WSDL}
+% ------------------------------------------------------------------ %
+
+\textbf{Architecture and principles.}
+SOAP (Simple Object Access Protocol) defines a strict XML-based message envelope
+composed of an optional \textit{Header} --- carrying metadata such as authentication
+tokens, routing directives, and transaction coordinators --- and a mandatory
+\textit{Body} carrying the operation payload. The protocol is transport-agnostic but
+deployed almost exclusively over HTTPS. Its companion specification, WSDL (Web Services
+Description Language), provides a machine-readable XML contract that formally describes
+operations, message schemas, and endpoint addresses, enabling automated client and server
+stub generation. The WS-* extension family adds WS-Security (XML Signature and XML
+Encryption for message-level integrity and confidentiality), WS-ReliableMessaging, and
+WS-AtomicTransaction. Services are tightly coupled: WSDL changes require coordinated
+updates across all consumers. Supported message exchange patterns include request-response,
+one-way, solicit-response, and notification.
+
+\textbf{Strengths.}
+SOAP's defining advantage is its formalism. WS-Security provides end-to-end message-level
+security independent of transport: digital signatures ensure integrity and non-repudiation;
+selective encryption provides confidentiality across multi-hop intermediaries --- a
+capability unique to SOAP in this comparison. The WSDL contract is machine-verifiable
+and supports automated code generation via Apache CXF, JAX-WS, and WCF. WS-AtomicTransaction
+enables distributed ACID transactions across organisational boundaries. These properties
+make SOAP the only technology suited to contexts where message-level guarantees carry
+regulatory weight.
+
+\textbf{Weaknesses.}
+XML verbosity is the primary operational cost: envelopes inflate payload size, increase
+parsing latency, and complicate debugging. Despite formal standards, WS-* interoperability
+between different vendor implementations has been historically inconsistent. Browser and
+mobile support is minimal; debugging requires specialised XML tools rather than simple
+HTTP inspection. The overall complexity of the WS-* stack raises development costs and
+integration effort compared to every other option examined here.
+
+\textbf{Stack, security, environments, and use cases.}
+Server implementations include Apache CXF and JAX-WS (Java), WCF (.NET), and Spyne
+(Python); messages are encoded in XML. Security is managed at message level via
+WS-Security, independently of TLS. SOAP is found primarily in banking, insurance,
+healthcare (HL7 v3), and government platforms where compliance, audit trails, and
+transactional guarantees are legally required. It is rarely the right choice for new
+projects outside these regulated contexts.
+
+% ------------------------------------------------------------------ %
+\subsection{REST (Representational State Transfer)}
+% ------------------------------------------------------------------ %
+
+\textbf{Architecture and principles.}
+REST is an architectural style --- not a protocol --- defined by six constraints applied
+to HTTP: client-server separation, statelessness, cacheability, uniform interface,
+layered system, and optional code-on-demand. Applied to HTTP, these produce APIs where
+resources are identified by URIs and manipulated via standard verbs (GET, POST, PUT,
+PATCH, DELETE), with status codes providing a standardised outcome vocabulary. Statelessness
+requires each request to be self-contained, enabling horizontal scaling without session
+affinity. The dominant payload format is JSON, consumed by any language or platform
+without specialised tooling.
+
+\textbf{Strengths.}
+Simplicity is REST's principal advantage. Any HTTP client --- a browser, cURL, or a
+mobile SDK --- can interact with a REST API without code generation. GET responses are
+cacheable at every HTTP layer (browser, CDN, reverse proxy), making REST exceptionally
+efficient for read-heavy workloads. The OpenAPI ecosystem provides standardised
+documentation, mock servers, validation, and multi-language client generation. REST's
+combination of accessibility and ecosystem depth makes it the most widely adopted paradigm
+for third-party API consumers.
+
+\textbf{Weaknesses.}
+REST imposes no mandatory schema, leading to inconsistent API design quality. Over-fetching
+(endpoints return more data than needed) and under-fetching (multiple requests required
+to assemble a view) are structural limitations that are particularly costly for mobile
+clients. API versioning has no consensus strategy; URL versioning, header negotiation, and
+content negotiation each carry different trade-offs. There is no standard for message-level
+security.
+
+\textbf{Stack, security, environments, and use cases.}
+Frameworks include Flask and Django REST Framework (Python), Spring Boot (Java), and
+Express.js (Node.js). Security relies on TLS for transport and OAuth2/JWT for
+authentication. REST is the standard for public APIs, cloud provider interfaces (AWS,
+GCP, Azure), SaaS platforms, and mobile backends. It is less appropriate for
+high-frequency internal microservice communication, where binary protocols offer better
+performance, or for clients with rapidly evolving and diverse data requirements.
+
+% ------------------------------------------------------------------ %
+\subsection{GraphQL}
+% ------------------------------------------------------------------ %
+
+\textbf{Architecture and principles.}
+GraphQL exposes a single endpoint backed by a strongly typed schema defined in the
+Schema Definition Language (SDL). Clients submit queries specifying precisely the fields
+required; the server responds with a payload mirroring the query structure. Three root
+operation types are defined: Query (read), Mutation (write), and Subscription
+(real-time events via WebSocket). Field resolution is delegated to resolver functions,
+which decouple the API schema from the underlying data sources and enable a single
+endpoint to aggregate data from multiple backends --- a pattern known as
+backend-for-frontend (BFF).
+
+\textbf{Strengths.}
+GraphQL eliminates both over-fetching and under-fetching simultaneously: the client
+declares exactly what it needs and the server returns only that. The typed schema
+functions as living documentation with interactive explorers (GraphiQL, Apollo Studio),
+compile-time query validation, and type-safe client code generation. A single query can
+retrieve data that would require several sequential REST requests, reducing network round
+trips. Schema introspection and strong typing significantly improve developer tooling and
+reduce integration errors.
+
+\textbf{Weaknesses.}
+The N+1 query problem --- where resolving N parent objects triggers N separate resolver
+calls for their children --- requires the DataLoader batching pattern to avoid database
+overload. HTTP caching is incompatible with the standard POST-to-single-endpoint model;
+persisted queries are needed as a workaround. Deeply nested queries create
+denial-of-service risk; query depth limits and complexity analysis are necessary
+safeguards. Schema evolution at scale demands careful deprecation management rather than
+simple version bumps.
+
+\textbf{Stack, security, environments, and use cases.}
+Server implementations include Apollo Server (Node.js), Strawberry and Graphene (Python),
+graphql-java (Java), and gqlgen (Go). Security uses TLS and OAuth2/JWT; introspection
+must be disabled in production; field-level authorisation is implemented in resolvers.
+GraphQL is best suited to BFF layers serving diverse client populations, mobile
+applications with heterogeneous data requirements, and developer platforms where
+schema-driven tooling is valued. It is poorly suited to simple CRUD services with uniform
+clients or architectures where HTTP caching is a first-class concern.
+
+% ------------------------------------------------------------------ %
+\subsection{gRPC}
+% ------------------------------------------------------------------ %
+
+\textbf{Architecture and principles.}
+gRPC is a high-performance RPC framework using Protocol Buffers (protobuf) as both
+interface definition language and binary serialisation format. Services and messages are
+defined in \texttt{.proto} files; the \texttt{protoc} compiler generates typed client
+stubs and server base classes in the target language. The framework runs exclusively over
+HTTP/2, which provides multiplexed concurrent streams, binary framing, HPACK header
+compression, and flow control. Four communication patterns are natively supported:
+unary (one request, one response), server-streaming, client-streaming, and bidirectional
+streaming. From the application layer, invoking a remote service is syntactically
+identical to a local function call.
+
+\textbf{Strengths.}
+Performance is gRPC's defining advantage. Protocol Buffer messages use field-number tags
+rather than field names, producing payloads three to ten times smaller than equivalent JSON,
+with faster serialisation and deserialisation. HTTP/2 multiplexing allows multiple
+concurrent RPCs over a single TCP connection without head-of-line blocking. Native
+streaming enables server-side data feeds, client telemetry aggregation, and full-duplex
+real-time communication --- patterns that REST and GraphQL cannot replicate natively.
+Strong schema enforcement via \texttt{.proto} files eliminates serialisation mismatches,
+and code generation removes boilerplate across all supported languages.
+
+\textbf{Weaknesses.}
+Binary encoding makes debugging without the schema file impossible; grpcurl and server
+reflection partially mitigate this. Browsers cannot use native gRPC because HTTP/2
+trailers are inaccessible via browser APIs; gRPC-Web with an Envoy proxy layer is
+required. Protobuf schema evolution follows strict field-number permanence rules: numbers
+cannot be reused and type changes break binary compatibility, requiring disciplined schema
+management. The toolchain (protoc, plugins, schema registries) adds operational overhead
+compared to text-based alternatives.
+
+\textbf{Stack, security, environments, and use cases.}
+Supported languages include Go, Java, Python, C++, C\#, Node.js, and Kotlin via plugins.
+Security uses TLS for transport and mTLS for mutual identity verification in zero-trust
+architectures; authorisation is implemented via server-side interceptors. gRPC is the
+preferred choice for internal microservice communication, polyglot systems requiring
+consistent cross-language contracts, latency-sensitive workloads, ML inference serving
+(e.g.\ TensorFlow Serving), and IoT telemetry pipelines. It is unsuitable for
+browser-native clients without a proxy and for public APIs targeting third-party developers
+unfamiliar with protobuf tooling.
+
+% ================================================================== %
+\section{Practical Examples}
+% ================================================================== %
+
+All examples use the same domain: a \texttt{UserService} that manages user records.
+This allows direct comparison at the protocol level. Complete Python server and client
+implementations for all four technologies are provided in the \texttt{examples/}
+directory of this project.
+
+% ------------------------------------------------------------------ %
+\subsection{SOAP / WSDL}
+% ------------------------------------------------------------------ %
+
+The WSDL excerpt below shows the type definitions and the operation contract. The
+\texttt{portType} element is the WSDL equivalent of an interface: it declares the
+\texttt{getUser} operation and the names of its input and output messages, each mapped
+to an XSD complex type.
+
+\begin{lstlisting}[language=XML, caption={WSDL excerpt --- type definitions and operation contract}]
+<types>
+  <xsd:complexType name="GetUserRequest">
+    <xsd:sequence>
+      <xsd:element name="userId" type="xsd:int"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="GetUserResponse">
+    <xsd:sequence>
+      <xsd:element name="userId"   type="xsd:int"/>
+      <xsd:element name="username" type="xsd:string"/>
+      <xsd:element name="email"    type="xsd:string"/>
+      <xsd:element name="role"     type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</types>
+<portType name="UserPortType">
+  <operation name="getUser">
+    <input  message="tns:GetUserRequest"/>
+    <output message="tns:GetUserResponse"/>
+  </operation>
+</portType>
+\end{lstlisting}
+
+The SOAP envelopes below illustrate the XML framing that every message carries,
+regardless of payload size. The envelope wraps the actual business data (the user ID in
+the request, the four user fields in the response) in multiple layers of XML markup,
+which is the root cause of SOAP's bandwidth and parsing overhead.
+
+\begin{lstlisting}[language=XML, caption={SOAP request and response envelopes for getUser}]
+<!-- REQUEST -->
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:usr="http://example.com/userservice">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <usr:GetUserRequest><usr:userId>42</usr:userId></usr:GetUserRequest>
+  </soapenv:Body>
+</soapenv:Envelope>
+
+<!-- RESPONSE -->
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:usr="http://example.com/userservice">
+  <soapenv:Body>
+    <usr:GetUserResponse>
+      <usr:userId>42</usr:userId>
+      <usr:username>jdupont</usr:username>
+      <usr:email>j.dupont@example.com</usr:email>
+      <usr:role>editor</usr:role>
+    </usr:GetUserResponse>
+  </soapenv:Body>
+</soapenv:Envelope>
+\end{lstlisting}
+
+% ------------------------------------------------------------------ %
+\subsection{REST}
+% ------------------------------------------------------------------ %
+
+The two listings below show a resource retrieval (GET) and a resource creation (POST)
+with their respective responses. HTTP status codes and the \texttt{Location} header in
+the POST response carry semantic meaning without requiring any parsing of the body.
+
+\begin{lstlisting}[caption={GET /api/users/42 --- request and response}]
+GET /api/users/42 HTTP/1.1
+Host: api.example.com
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9...
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{"userId":42,"username":"jdupont","email":"j.dupont@example.com","role":"editor"}
+\end{lstlisting}
+
+\begin{lstlisting}[caption={POST /api/users --- resource creation}]
+POST /api/users HTTP/1.1
+Content-Type: application/json
+
+{"username":"mmartin","email":"m.martin@example.com","role":"viewer"}
+
+HTTP/1.1 201 Created
+Location: /api/users/43
+Content-Type: application/json
+
+{"userId":43,"username":"mmartin","email":"m.martin@example.com","role":"viewer"}
+\end{lstlisting}
+
+% ------------------------------------------------------------------ %
+\subsection{GraphQL}
+% ------------------------------------------------------------------ %
+
+The SDL schema defines the complete type system. The query below requests only three
+fields (\texttt{username}, \texttt{email}, and the nested post titles), leaving
+\texttt{userId}, \texttt{role}, and \texttt{createdAt} unselected. The response mirrors
+the query structure exactly: unrequested fields are absent, and the user's posts are
+returned in the same round trip --- eliminating both over-fetching and under-fetching
+simultaneously.
+
+\begin{lstlisting}[language=graphql, caption={GraphQL schema (SDL)}]
+type User {
+  userId: ID!   username: String!   email: String!
+  role: String!   createdAt: String!   posts: [Post!]!
+}
+type Post   { postId: ID!   title: String!   publishedAt: String! }
+type Query  { user(userId: ID!): User   users: [User!]! }
+type Mutation { createUser(username: String!, email: String!, role: String!): User! }
+type Subscription { userCreated: User! }
+\end{lstlisting}
+
+\begin{lstlisting}[caption={GraphQL query and server response}]
+// Query (sent as HTTP POST body)
+query GetUserWithPosts {
+  user(userId: "42") {
+    username
+    email
+    posts { title  publishedAt }
+  }
+}
+
+// Response
+{
+  "data": {
+    "user": {
+      "username": "jdupont",
+      "email": "j.dupont@example.com",
+      "posts": [
+        {"title": "Comparing API Paradigms", "publishedAt": "2026-02-01T14:30:00Z"}
+      ]
+    }
+  }
+}
+\end{lstlisting}
+
+% ------------------------------------------------------------------ %
+\subsection{gRPC}
+% ------------------------------------------------------------------ %
+
+The \texttt{.proto} file is the authoritative contract for the service. The Python
+server listing implements the three RPCs: two unary calls and one server-streaming call.
+The client listing demonstrates invoking the streaming \texttt{ListUsers} RPC, which
+yields user records one by one over an open HTTP/2 stream.
+
+\begin{lstlisting}[language=protobuf, caption={user\_service.proto --- service contract}]
+syntax = "proto3";
+package userservice;
+
+service UserService {
+  rpc GetUser    (GetUserRequest)    returns (UserResponse);
+  rpc ListUsers  (ListUsersRequest)  returns (stream UserResponse);
+  rpc CreateUser (CreateUserRequest) returns (UserResponse);
+}
+
+message GetUserRequest    { int32  user_id  = 1; }
+message ListUsersRequest  {}
+message CreateUserRequest { string username = 1; string email = 2; string role = 3; }
+message UserResponse      { int32  user_id  = 1; string username = 2;
+                            string email    = 3; string role     = 4; }
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, style=codestyle,
+                   caption={gRPC server --- servicer implementation (Python)}]
+class UserServiceServicer(user_service_pb2_grpc.UserServiceServicer):
+
+    def GetUser(self, request, context):
+        user = USERS.get(request.user_id)
+        if user is None:
+            context.abort(grpc.StatusCode.NOT_FOUND, "User not found")
+        return user_service_pb2.UserResponse(user_id=request.user_id, **user)
+
+    def ListUsers(self, request, context):       # server-streaming RPC
+        for uid, user in USERS.items():
+            yield user_service_pb2.UserResponse(user_id=uid, **user)
+
+    def CreateUser(self, request, context):
+        nid = max(USERS) + 1
+        USERS[nid] = dict(username=request.username,
+                          email=request.email, role=request.role)
+        return user_service_pb2.UserResponse(user_id=nid, **USERS[nid])
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, style=codestyle,
+                   caption={gRPC client --- unary and streaming calls (Python)}]
+with grpc.insecure_channel("localhost:50051") as channel:
+    stub = user_service_pb2_grpc.UserServiceStub(channel)
+
+    # Unary call: retrieve a single user
+    r = stub.GetUser(user_service_pb2.GetUserRequest(user_id=42))
+    print(f"GetUser -> {r.username}, {r.role}")
+
+    # Server-streaming call: iterate over all users as they arrive
+    for u in stub.ListUsers(user_service_pb2.ListUsersRequest()):
+        print(f"  [{u.user_id}] {u.username} <{u.email}>")
+\end{lstlisting}
+
+% ================================================================== %
+\section{Comparative Summary Table}
+% ================================================================== %
+
+\renewcommand{\arraystretch}{1.2}
+\footnotesize
+\begin{longtable}{|p{2.6cm}|p{2.85cm}|p{2.85cm}|p{2.85cm}|p{2.85cm}|}
+\hline
+\textbf{Dimension}
+  & \textbf{SOAP / WSDL}
+  & \textbf{REST}
+  & \textbf{GraphQL}
+  & \textbf{gRPC} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Dimension}
+  & \textbf{SOAP / WSDL}
+  & \textbf{REST}
+  & \textbf{GraphQL}
+  & \textbf{gRPC} \\
+\hline
+\endhead
+\hline
+\endfoot
+
+\textbf{Protocol / transport}
+  & SOAP over HTTP, SMTP, JMS
+  & HTTP/1.1 or HTTP/2
+  & HTTP (POST / GET)
+  & HTTP/2 only \\
+\hline
+
+\textbf{Message format}
+  & XML (mandatory)
+  & JSON (typical)
+  & JSON
+  & Protocol Buffers (binary) \\
+\hline
+
+\textbf{Schema / contract}
+  & WSDL (mandatory)
+  & OpenAPI (optional)
+  & SDL (mandatory)
+  & .proto (mandatory) \\
+\hline
+
+\textbf{Performance}
+  & Low --- verbose XML
+  & Moderate
+  & Moderate
+  & High --- binary + HTTP/2 \\
+\hline
+
+\textbf{Payload size}
+  & Very large
+  & Medium
+  & Client-controlled
+  & Very small \\
+\hline
+
+\textbf{Data fetching model}
+  & Fixed per operation
+  & Fixed per endpoint
+  & Client-defined fields
+  & Fixed per RPC \\
+\hline
+
+\textbf{Streaming support}
+  & Limited (MTOM)
+  & Partial (SSE)
+  & Subscriptions (WS)
+  & Native (4 patterns) \\
+\hline
+
+\textbf{Browser support}
+  & Poor
+  & Excellent
+  & Excellent
+  & Limited (gRPC-Web) \\
+\hline
+
+\textbf{Security model}
+  & WS-Security (msg-level)
+  & TLS + OAuth2 / JWT
+  & TLS + OAuth2 / JWT
+  & TLS + mTLS \\
+\hline
+
+\textbf{Developer usability}
+  & Low (steep learning curve)
+  & High
+  & High (with tooling)
+  & Moderate \\
+\hline
+
+\textbf{Code generation}
+  & Yes (from WSDL)
+  & Partial (from OpenAPI)
+  & Yes (from SDL)
+  & Yes (from .proto) \\
+\hline
+
+\textbf{HTTP caching}
+  & Not applicable
+  & Native (GET responses)
+  & Persisted queries
+  & Application-level only \\
+\hline
+
+\textbf{Client--server coupling}
+  & Tight
+  & Loose
+  & Loose (schema-guided)
+  & Tight (schema-governed) \\
+\hline
+
+\textbf{Versioning strategy}
+  & WSDL versioning
+  & URL / header versioning
+  & Additive schema evolution
+  & Field-number stability \\
+\hline
+
+\textbf{Typical domain}
+  & Enterprise, banking, HL7
+  & Public APIs, SaaS, mobile
+  & BFF, SPA, mobile
+  & Microservices, IoT, ML \\
+\hline
+
+\textbf{Ecosystem maturity}
+  & Very mature (largely legacy)
+  & Very mature
+  & Maturing rapidly
+  & Maturing \\
+\hline
+
+\end{longtable}
+\normalsize
+\renewcommand{\arraystretch}{1}
+
+% ================================================================== %
+\section{Conclusion}
+% ================================================================== %
+
+The four technologies examined in this report are not competing alternatives but
+complementary tools, each suited to a distinct set of requirements. Selecting the wrong
+paradigm has real costs --- wasted bandwidth, poor developer experience, or security
+gaps --- while selecting the right one can significantly simplify both implementation and
+operations.
+
+SOAP remains the appropriate choice when formal contractual guarantees, message-level
+security, or distributed transactional semantics carry legal or compliance weight. In
+banking, insurance, and healthcare integration, these properties are not optional, and
+SOAP's complexity is the price of the guarantees it provides.
+
+REST is the rational default for any API that will be consumed by diverse, externally
+managed clients. Its alignment with HTTP semantics, universal tooling support, and native
+caching behaviour make it the most accessible and operationally simple option. Its
+limitations around schema enforcement and data fetching efficiency are real but manageable
+for the majority of public API use cases.
+
+GraphQL addresses REST's data fetching limitations in a principled way. Its ability to
+serve multiple client types from a single schema and to aggregate multiple backends into
+one query layer makes it the natural choice for frontend-facing data layers in complex
+applications. The server-side complexity it introduces is a reasonable trade-off when
+clients are diverse and network efficiency matters.
+
+gRPC represents the highest-performance option and is the appropriate choice for internal
+service-to-service communication in polyglot microservice architectures. Its binary
+encoding, HTTP/2 transport, native streaming, and cross-language code generation
+provide advantages that text-based protocols cannot match for high-frequency, low-latency
+communication. The accessibility trade-offs --- binary opacity, limited browser support,
+protobuf toolchain overhead --- are acceptable when teams control both ends of the
+connection.
+
+In practice, mature distributed systems commonly employ all four paradigms simultaneously:
+REST for the public API surface, GraphQL for the frontend aggregation layer, gRPC for
+internal service communication, and SOAP where legacy integration requirements demand it.
+Understanding the reasoning behind each technology, rather than treating any single one
+as a universal solution, is the foundation of sound distributed systems engineering.
+
+% ================================================================== %
+\begin{thebibliography}{9}
+% ================================================================== %
+\bibitem{fielding2000}
+Fielding, R.T. (2000).
+\textit{Architectural Styles and the Design of Network-based Software Architectures}.
+Doctoral dissertation, University of California, Irvine.
+
+\bibitem{soap12}
+Gudgin, M. et al.\ (2007).
+\textit{SOAP Version 1.2, Part 1: Messaging Framework (Second Edition)}.
+W3C Recommendation.
+
+\bibitem{wsdl20}
+Chinnici, R. et al.\ (2007).
+\textit{Web Services Description Language (WSDL) Version 2.0 Part 1: Core Language}.
+W3C Recommendation.
+
+\bibitem{graphqlspec}
+The GraphQL Foundation (2021).
+\textit{GraphQL Specification, October 2021 Edition}.
+\url{https://spec.graphql.org/October2021/}
+
+\bibitem{grpcdocs}
+Google LLC (2024).
+\textit{gRPC Documentation}. \url{https://grpc.io/docs/}
+
+\bibitem{protobufdocs}
+Google LLC (2024).
+\textit{Protocol Buffers Developer Guide}. \url{https://protobuf.dev/}
+
+\bibitem{masse2011}
+Masse, M. (2011).
+\textit{REST API Design Rulebook}. O'Reilly Media.
+
+\bibitem{richardson2013}
+Richardson, L. and Amundsen, M. (2013).
+\textit{RESTful Web APIs}. O'Reilly Media.
+
+\end{thebibliography}
+
+\end{document}

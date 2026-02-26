@@ -1,0 +1,21 @@
+# ============================================================
+# Shared dependencies for all practical examples
+# Install with:  pip install -r requirements.txt
+# Tested with Python 3.12
+# ============================================================
+
+# SOAP – Flask serves the WSDL and handles SOAP envelopes; lxml builds/parses XML
+# (spyne is NOT compatible with Python 3.12; zeep is not needed)
+flask
+lxml
+requests
+
+# REST – Flask for the server, requests for the client (already listed above)
+
+# GraphQL – Strawberry schema, served via strawberry.flask.views.GraphQLView
+strawberry-graphql
+
+# gRPC – runtime + code-generation tool
+# Run generate_proto.py once before starting the server/client
+grpcio
+grpcio-tools
